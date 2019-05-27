@@ -1,0 +1,149 @@
+{% extends 'layouts/app.html' %}
+{% load static %}
+{% block title %} Clone Paste {{ block.super }}{% endblock title %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{% static 'plugins/select2/css/select2.min.css' %}">
+{% endblock %}
+
+{% block content %}
+
+    <div class="container content">
+        <div class="row">
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-body">
+                        {% include 'includes/messages.html' %}
+                        {% if form.errors %}
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <div class="alert alert-danger alert-dismissable">
+                                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                        <strong>{{ error|escape }}</strong>
+                                    </div>
+                                {% endfor %}
+                            {% endfor %}
+                            {% for error in form.non_field_errors %}
+                                <div class="alert alert-danger alert-dismissable">
+                                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                    <strong>{{ error|escape }}</strong>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        <form method="post" action="">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="content" class="font-weight-bold">New Paste</label>
+                                <textarea name="content" class="form-control" rows="15"
+                                          id="content"
+                                          autofocus>{{ paste.content }}</textarea>
+                            </div>
+                            <h5>Paste Settings</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Syntax Highlighting:
+                                            <small class="text-muted">(Optional)</small>
+                                        </label>
+                                        <select class="form-control select2" name="syntax">
+                                            <option value="markup">Select language</option>
+                                            <optgroup label="Popular Languages">
+                                                {% for syntax in popular_syntaxes %}
+                                                    {% if paste.syntax == syntax.slug %}
+                                                        <option selected
+                                                                value="{{ syntax.slug }}">{{ syntax.name }}</option>
+                                                    {% else %}
+                                                        <option value="{{ syntax.slug }}">{{ syntax.name }}</option>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </optgroup>
+                                            <optgroup label="All Languages">
+                                                {% for syntax in all_syntaxes %}
+                                                    {% if paste.syntax == syntax.slug %}
+                                                        <option selected
+                                                                value="{{ syntax.slug }}">{{ syntax.name }}</option>
+                                                    {% else %}
+                                                        <option value="{{ syntax.slug }}">{{ syntax.name }}</option>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </optgroup>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Paste Expiration:
+                                            <small class="text-muted">(Optional)</small>
+                                        </label>
+                                        <select class="form-control" name="expire">
+                                            <option value="N">Never</option>
+                                            <option value="SD">Self Destroy</option>
+                                            <option value="10M">10 Minutes</option>
+                                            <option value="1H">1 Hour</option>
+                                            <option value="1D">1 Day</option>
+                                            <option value="1W">1 Week</option>
+                                            <option value="1M">1 Month</option>
+                                            <option value="6M">6 Months</option>
+                                            <option value="1Y">1 Year</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Paste Status:
+                                            <small class="text-muted">(Optional)</small>
+                                        </label>
+
+                                        <select class="form-control" name="status">
+                                            <option value="1">Public</option>
+                                            <option value="2">Unlisted</option>
+                                            <option value="3">
+                                                Private
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Paste Title :
+                                            <small class="text-muted">(Optional)</small>
+                                        </label>
+                                        <input type="text" name="title" class="form-control"
+                                               placeholder="Paste Title" value="{{ paste.title }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-success">Create New Paste</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        {% if not request.user.is_authenticated %}
+                            <div class="alert alert-warning" role="alert">
+                                <i class="fa fa-info-circle"></i>
+                                You are currently not logged in, this means you can not edit or delete anything you
+                                paste.
+                                <a href="{% url 'accounts:register' %}">Sign Up</a> or
+                                <a href="{% url 'accounts:login' %}">Login</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% include 'includes/recent-pastes.html' %}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+
+    <script src="{% static 'plugins/select2/js/select2.min.js' %}"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            $('.select2').select2({
+                placeholder: "Select language",
+                selectOnClose: true
+            });
+        })
+    </script>
+
+{% endblock %}

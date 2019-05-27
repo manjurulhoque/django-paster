@@ -1,0 +1,185 @@
+{% extends 'layouts/app.html' %}
+{% load static %}
+{% block title %} {{ paste.title }} {% endblock %}
+
+{% block stylesheets %}
+
+    <link rel="stylesheet" href="{% static 'css/prism-okadia.css' %}">
+
+{% endblock %}
+
+{% block content %}
+
+    <main>
+        <div class="container content">
+            <div class="row">
+                <div class="col-md-9">
+                    <div class="card">
+                        <div class="card-body">
+                            {% include 'includes/messages.html' %}
+                            <div class="media">
+                                {% if paste.user %}
+                                    <img class="mr-3 mb-3 rounded-circle img-fluid" src="/media/{{ paste.user.avatar }}"
+                                         alt="avatar" style="height: 60px">
+                                {% else %}
+                                    <img class="mr-3 mb-3 rounded-circle img-fluid"
+                                         src="/media/avatars/guest.png" alt="avatar"
+                                         style=" height: 60px">
+                                {% endif %}
+
+                                <div class="media-body">
+                                    <h5 class="mt-0">
+                                        <i class="fa fa-paste blue-grey-text small"></i>
+                                        {% if paste.expire_time %}
+                                            <i class="fa fa-clock-o text-warning small"></i>
+                                        {% endif %}
+                                        {{ paste.title }}
+                                    </h5>
+                                    <p class="text-muted small">
+                                        <i class="fa fa-user"></i>
+                                        {% if paste.user %}
+                                            <a href="#"> {{ paste.user.name }} </a>
+                                        {% else %}
+                                            Guest
+                                        {% endif %}
+                                        <i class="fa fa-eye ml-2"></i> {{ paste.views }}
+                                        <i class="fa fa-calendar ml-2"> {{ paste.created_at }}</i>
+                                        {% if paste.status == 2 %}
+                                            <span class="badge badge-warning">Unlisted</span>
+                                        {% elif paste.status == 3 %}
+                                            <span class="badge badge-danger">Private</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                {% if request.user.is_authenticated %}
+                                    {% if request.user.id == paste.user.id %}
+                                        <a href="#" class="badge badge-info mr-2">
+                                            <i class="fa fa-edit"></i> Edit
+                                        </a>
+                                        <a href="#" class="badge badge-danger"
+                                           onclick="return confirm('Are you sure?')">
+                                            <i class="fa fa-trash"></i> Delete
+                                        </a>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                            {% if request.user.is_authenticated %}
+                                {% if request.user.id == paste.user.id %}
+                                    <p class="text-muted text-center">
+                                        <small>This is one of your paste</small>
+                                    </p>
+                                {% endif %}
+                            {% endif %}
+                            <div class="card">
+                                <div class="card-header">
+                                    <span class="badge badge-light">{{ paste.syntax|upper }}</span>
+                                    <small class="text-muted">{{ paste.content_size }} KB</small>
+                                    <div class="pull-right">
+                                        <a class="buttonsm" data-toggle="modal"
+                                           data-target="#shareModal">share
+                                        </a>
+                                        <a href="#" class="buttonsm">raw</a>
+                                        <a href="{% url 'pasteapp:paste-download' paste.slug %}" class="buttonsm">download</a>
+                                        <a href="{% url 'pasteapp:paste-clone-redirect' paste.slug %}" class="buttonsm">clone</a>
+                                        <a class="buttonsm" data-toggle="modal"
+                                           data-target="#embedModal">
+                                            embed
+                                        </a>
+                                        {% if request.user.is_authenticated %}
+                                            <a class="buttonsm" data-toggle="modal"
+                                               data-target="#reportModal">report
+                                            </a>
+                                        {% else %}
+                                            <a class="buttonsm" href="#">report</a>
+                                        {% endif %}
+                                        <a href="#" class="buttonsm">print</a>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <pre class="line-numbers language-{{ paste.syntax }}" id="pre">
+                                            <code class="language-{{ paste.syntax }}" id="paste_content">
+                                             {{ paste.content }}
+                                          </code>
+                                     </pre>
+                                </div>
+                            </div>
+
+                            <div class="form-group mt-3 mb-3">
+                                <small class="text-muted">To share this paste please copy this url and send to your
+                                    friends
+                                </small>
+
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <button class="btn btn-md btn-blue-grey m-0 px-3" id="copy-to-clipboard"
+                                                type="button" data-clipboard-target="#url">Copy
+                                        </button>
+                                    </div>
+                                    <input type="text" class="form-control" value="http://
+                                            {{ request.get_host }}{% url 'pasteapp:paste-details' paste.slug %}"
+                                           readonly id="url">
+                                </div>
+                            </div>
+
+                            <div class="card mt-3">
+                                <div class="card-header"> Raw Paste Data</div>
+                                <div class="card-body">
+                                    <textarea class="form-control" rows="10"
+                                              id="raw_content">{{ paste.content }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% include 'includes/recent-pastes.html' %}
+                {% include 'includes/modals.html' %}
+            </div>
+        </div>
+    </main>
+
+{% endblock %}
+
+{% block scripts %}
+
+    <script src="{% static 'plugins/clipboardjs/clipboard.min.js' %}"></script>
+    <script src="{% static 'js/prism.js' %}"></script>
+    <script src="{% static 'js/prisma-custom.js' %}"></script>
+
+    <script type="text/javascript">
+        let clipboard = new ClipboardJS('#copy-to-clipboard');
+
+        clipboard.on('success', function (e) {
+            $(e.trigger).text("Copied!");
+            e.clearSelection();
+            setTimeout(function () {
+                $(e.trigger).text("Copy");
+            }, 5000);
+        });
+
+        clipboard.on('error', function (e) {
+            $(e.trigger).text("Can't in Safari");
+            setTimeout(function () {
+                $(e.trigger).text("Copy");
+            }, 2500);
+        });
+
+        // embed clipboard
+        let embed_clipboard = new ClipboardJS('#embed-clipboard');
+
+        embed_clipboard.on('success', function (e) {
+            $(e.trigger).text("Copied!");
+            e.clearSelection();
+            setTimeout(function () {
+                $(e.trigger).text("Copy");
+            }, 5000);
+        });
+
+        embed_clipboard.on('error', function (e) {
+            $(e.trigger).text("Can't in Safari");
+            setTimeout(function () {
+                $(e.trigger).text("Copy");
+            }, 2500);
+        });
+    </script>
+
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'layouts/app.html' %}
+
+{% block title %} {{ title }}{{ block.super }}{% endblock title %}
+
+{% block content %}
+
+    <div class="container content">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                {% include 'includes/messages.html' %}
+                <div class="card">
+                    <div class="card-header blue-grey">{{ title }}</div>
+
+                    <div class="card-body">
+                        {% if form.errors %}
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <div class="alert alert-danger alert-dismissable">
+                                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                        <strong>{{ error|escape }}</strong>
+                                    </div>
+                                {% endfor %}
+                            {% endfor %}
+                            {% for error in form.non_field_errors %}
+                                <div class="alert alert-danger alert-dismissable">
+                                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                    <strong>{{ error|escape }}</strong>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        <form method="POST" action="">
+                            {% csrf_token %}
+                            {% for field in form %}
+                                <div class="form-group">
+                                    <label for="id_{{ field.name }}">{{ field.label }}</label>
+                                    <input type="{{ field.field.widget.input_type }}"
+                                           class="form-control"
+                                           name="{{ field.name }}"
+                                           id="id_{{ field.name }}"
+                                           placeholder="{{ field.field.widget.attrs.placeholder }}">
+                                </div>
+                            {% endfor %}
+                            <br>
+                            <input class="btn btn-success" type="submit" value='{{ title }}'>&nbsp; &nbsp;
+                            {% if request.path == "/login/" %}
+                                Don't Have an Account <a href="{% url "accounts:register" %}">Register Here.</a>
+                            {% else %}
+                                Have an Account <a href="{% url 'accounts:login' %}">Login Here.</a>
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

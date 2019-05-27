@@ -1,0 +1,50 @@
+{% extends 'layouts/app.html' %}
+
+{% block content %}
+
+    <main>
+        <div class="container content">
+            <div class="row">
+                <div class="col-md-9">
+                    <div class="card">
+                        <div class="card-header blue-grey"> My Pastes</div>
+                        <ul class="list-group list-group-flush">
+                            {% for paste in pastes %}
+                                <li class="list-group-item">
+                                    <div class="pull-left">
+                                        <i class="fa fa-paste blue-grey-text small"></i>
+                                        {% if paste.expire_time %}
+                                            <i class="fa fa-clock-o text-warning small"></i>
+                                        {% endif %}
+                                        <a href="{% url 'pasteapp:paste-details' paste.slug %}">{{ paste.title }}</a>
+
+                                        <p>
+                                            <small class="text-muted">
+                                                {{ paste.syntax }}
+                                                | <i class="fa fa-eye blue-grey-text"></i> {{ paste.views }}
+                                                | {{ paste.created_at|timesince }}
+                                            </small>
+                                        </p>
+                                    </div>
+                                    <div class="pull-right">
+                                        <a href="#" class="badge badge-info mr-2">
+                                            <i class="fa fa-edit"></i> Edit
+                                        </a>
+                                        <a href="#" class="badge badge-danger"
+                                           onclick="return confirm('Are you sure?')">
+                                            <i class="fa fa-trash"></i> Delete
+                                        </a>
+                                    </div>
+                                </li>
+                            {% empty %}
+                                <li class="list-group-item">No results</li>
+                            {% endfor %}
+                        </ul>
+                        <div class=" mx-auto mt-3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+{% endblock %}

@@ -1,0 +1,134 @@
+/**
+    Custom CSS
+ */
+
+.container.content {
+    margin-top: 15px;
+}
+
+.navbar {
+    background: #023859 linear-gradient(#023859, #02456c);
+    font-size: 1em;
+    font-family: "segoe ui", "Lucida Sans Unicode", "Lucida Sans", Sans-Serif;
+    font-weight: 600;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: #ffffff;
+}
+
+.btn.btn-sm {
+    padding: .5rem 1.6rem;
+}
+
+pre[class*="language-"].line-numbers {
+    position: relative;
+    padding-left: 3.8em;
+    counter-reset: linenumber;
+}
+
+pre[class*="language-"].line-numbers > code {
+    position: relative;
+    white-space: inherit;
+}
+
+.line-numbers .line-numbers-rows {
+    position: absolute;
+    pointer-events: none;
+    top: 0;
+    font-size: 100%;
+    left: -3.8em;
+    width: 3em; /* works for line-numbers below 1000 lines */
+    letter-spacing: -1px;
+    border-right: 1px solid #999;
+
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+}
+
+.line-numbers-rows > span {
+    pointer-events: none;
+    display: block;
+    counter-increment: linenumber;
+}
+
+.line-numbers-rows > span:before {
+    content: counter(linenumber);
+    color: #999;
+    display: block;
+    padding-right: 0.8em;
+    text-align: right;
+}
+
+.buttonsm, .buttonsm:hover {
+    background-color: #ddd;
+    border-bottom: 2px solid #ccc;
+    border-left: 0;
+    border-radius: 3px;
+    border-right: 0;
+    border-top: 0;
+    color: #000;
+    cursor: pointer;
+    display: inline-block;
+    font-family: "segoe ui", "trebuchet MS", "Lucida Sans Unicode", "Lucida Sans", Sans-Serif;
+    font-size: 12px;
+    font-weight: 400;
+    height: 18px;
+    line-height: 18px;
+    text-align: center;
+    text-decoration: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    padding: 0 6px;
+    opacity: .75;
+    margin: 0 0 0 8px;
+}
+
+.btn-blue-grey, .blue-grey {
+    background-color: #78909c !important;
+    border-color: #78909c !important;
+    color: #fff !important;
+}
+
+/*Change select2 dropdown height*/
+
+.select2-selection {
+    min-height: 38px;
+}
+
+.select2-selection__rendered {
+    margin: 5px;
+}
+
+.select2-selection__arrow {
+    margin: 5px;
+}
+
+/*Change tab background color*/
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    color: #fff;
+    background-color: #78909c;
+}
+
+/*Change button color*/
+
+.btn.btn-success {
+    background-color: #00bfa5;
+    border-color: #00bfa5;
+}
+
+.btn.btn-warning {
+    color: #ffffff;
+    background-color: #ffd600;
+    border-color: #ffd600;
+}
+
+/*Change fa color*/
+
+.fa-heart {
+    color: deeppink;
+}
